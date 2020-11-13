@@ -16,6 +16,9 @@ const nav = () => {
           <a className="navbar-brand" href="/teams">
             Teams
           </a>
+          <a className="navbar-brand" href="/map">
+            Map
+          </a>
         </ul>
       </nav>
     </div>

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "sportsmeet",
   "private": true,
-  "proxy": "http://localhost:3001/",
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "axios": "^0.21.0",
     "dom": "0.0.3",

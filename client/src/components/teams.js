@@ -1,12 +1,13 @@
 import React, { Component, useContext } from "react";
 // import API from "../utils/API";
 import axios from "axios";
+import Map from "./Map";
 
-const Todo = (props) => (
+const Team = (props) => (
   <tr>
-    <td>{props.todo.todo_Team}</td>
-    <td>{props.todo.todo_Location}</td>
-    <td>{props.todo.todo_Description}</td>
+    <td>{props.team.user}</td>
+    <td>{props.team.team}</td>
+    <td>{props.team.location}</td>
     <td>{/* <Link to={"/edit/" + props.todo._id}>Edit</Link> */}</td>
   </tr>
 );
@@ -21,29 +22,29 @@ export default class Teams extends Component {
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      todo_Team: "",
-      todo_Location: "",
-      todo_Description: "",
-      todo_completed: false,
-      todos: [],
+      user: "",
+      team: "",
+      location: "",
+      completed: false,
+      teams: [],
     };
   }
 
   user(e) {
     this.setState({
-      todo_Team: e.target.value,
+      user: e.target.value,
     });
   }
 
   team(e) {
     this.setState({
-      todo_Location: e.target.value,
+      team: e.target.value,
     });
   }
 
   location(e) {
     this.setState({
-      todo_Description: e.target.value,
+      location: e.target.value,
     });
   }
 
@@ -51,38 +52,41 @@ export default class Teams extends Component {
     e.preventDefault();
 
     console.log(`Form submitted:`);
-    console.log(`Todo Team: ${this.state.todo_Team}`);
-    console.log(`Todo Location: ${this.state.todo_Location}`);
-    console.log(`Todo Description: ${this.state.todo_Description}`);
+    console.log(`Todo Team: ${this.state.user}`);
+    console.log(`Todo Location: ${this.state.team}`);
+    console.log(`Todo Description: ${this.state.location}`);
 
     const newTodo = {
-      todo_Team: this.state.todo_Team,
-      todo_Location: this.state.todo_Location,
-      todo_Description: this.state.todo_Description,
-      todo_completed: this.state.todo_completed,
+      user: this.state.user,
+      team: this.state.team,
+      location: this.state.location,
+      completed: this.state.completed,
     };
 
-    axios.post("teams/todos/add", newTodo).then((res) => console.log(res.data));
-    axios
-      .get("teams/todos/")
-      .then((response) => {
-        this.setState({ todos: response.data });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    axios.post("/teams/add", newTodo).then((res) => {
+      console.log(res.data);
+      axios
+        .get("/teams/")
+        .then((response) => {
+          this.setState({ teams: response.data });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
 
-    this.setState({
-      todo_Team: "",
-      todo_Location: "",
-      todo_Description: "",
-      todo_completed: false,
+      this.setState({
+        user: "",
+        team: "",
+        location: "",
+        completed: false,
+        teams: [],
+      });
     });
   }
 
   teamList() {
-    return this.state.todos.map(function (currentTodo, i) {
-      return <Todo todo={currentTodo} key={i} />;
+    return this.state.teams.map(function (currentTeam, i) {
+      return <Team team={currentTeam} key={i} />;
     });
   }
 
@@ -98,7 +102,7 @@ export default class Teams extends Component {
                 type="text"
                 className="form-control"
                 name="teamName"
-                value={this.state.todo_Team}
+                value={this.state.user}
                 onChange={this.user}
               />
             </div>
@@ -108,7 +112,7 @@ export default class Teams extends Component {
                 type="text"
                 className="form-control"
                 name="location"
-                value={this.state.todo_Location}
+                value={this.state.team}
                 onChange={this.team}
               />
             </div>
@@ -118,7 +122,7 @@ export default class Teams extends Component {
                 type="text"
                 className="form-control"
                 name="description"
-                value={this.state.todo_Description}
+                value={this.state.location}
                 onChange={this.location}
               />
             </div>
@@ -128,7 +132,11 @@ export default class Teams extends Component {
             </div>
           </form>
         </div>
-
+        <Map
+          locations={this.state.teams.map((team) => {
+            return team.coords;
+          })}
+        />
         <br></br>
         <h3>Team Info</h3>
         <table className="table table-dark" style={{ marginTop: 20 }}>

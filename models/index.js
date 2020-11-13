@@ -1,3 +1,3 @@
-module.exports = {
-  Teams: require("./teams"),
-};
+// module.exports = {
+//   Team: require("./team"),
+// };

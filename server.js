@@ -4,9 +4,10 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 const mongoose = require("mongoose");
 // const routes = require("./routes");
-const todoRoutes = express.Router();
+const teamRoutes = express.Router();
+const axios = require("axios");
 
-let Todo = require("./models/todo.model");
+let Team = require("./models/team.model");
 // Define middleware here
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -15,31 +16,32 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost/reactrecipes",
-  { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
-);
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/sportsmeet", {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+});
 
-todoRoutes.route("/").get(function (req, res) {
-  Todo.find(function (err, todos) {
+teamRoutes.route("/").get(function (req, res) {
+  Team.find(function (err, teams) {
     if (err) {
       console.log(err);
     } else {
-      res.json(todos);
+      res.json(teams);
     }
   });
 });
 
-todoRoutes.route("/:id").get(function (req, res) {
+teamRoutes.route("/:id").get(function (req, res) {
   let id = req.params.id;
-  Todo.findById(id, function (err, todos) {
-    res.json(todos);
+  Team.findById(id, function (err, teams) {
+    res.json(teams);
   });
 });
 
-todoRoutes.route("/:id").put(function (req, res) {
+teamRoutes.route("/:id").put(function (req, res) {
   console.log(req.params.id);
-  Todo.findOneAndUpdate({ _id: req.params.id }, req.body, {
+  Team.findOneAndUpdate({ _id: req.params.id }, req.body, {
     new: true,
   }).then((response) => {
     console.log(response);
@@ -47,34 +49,42 @@ todoRoutes.route("/:id").put(function (req, res) {
   });
 });
 
-todoRoutes.route("/:id").delete(function (req, res) {
+teamRoutes.route("/:id").delete(function (req, res) {
   console.log(req.params.id);
-  Todo.findById({ _id: req.params.id })
+  Team.findById({ _id: req.params.id })
     .then((dbModel) => dbModel.remove())
     .then((dbModel) => res.json(dbModel))
     .catch((err) => res.status(422).json(err));
 });
 
-todoRoutes.route("/add").post(function (req, res) {
-  let todos = new Todo(req.body);
-  todos
-    .save()
-    .then((todos) => {
-      res.status(200).json({ todo: "todo added successfully" });
+teamRoutes.route("/add").post(function (req, res) {
+  axios
+    .get(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${req.body.location}&key=AIzaSyBVMzrG2VGR9n61ElBUaECsWbrcjZQeLB8`
+    )
+    .then((response) => {
+      req.body.coords = response.data.results[0].geometry.location;
+      let team = new Team(req.body);
+      team
+        .save()
+        .then((team) => {
+          res.status(200).json({ team: "team added successfully" });
+        })
+        .catch((err) => {
+          res.status(400).send("adding new team failed");
+        });
     })
-    .catch((err) => {
-      res.status(400).send("adding new todo failed");
-    });
+    .catch((err) => console.log(err));
 });
 
-app.use("/todos", todoRoutes);
+app.use("/teams", teamRoutes);
 // Define API routes here
 // app.use(routes);
 // Send every other request to the React app
 // Define any API routes before this runs
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "./client/build/index.html"));
+// });
 
 app.listen(PORT, () => {
   console.log(`🌎 ==> API server now on port ${PORT}!`);

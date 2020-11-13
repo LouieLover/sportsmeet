@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const teamRoutes = require("./teams");
+// const router = require("express").Router();
+// const teamRoutes = require("./teams");
 
-// Team routes
-router.use("/teams", teamRoutes);
+// // Team routes
+// router.use("/teams", teamRoutes);
 
-module.exports = router;
+// module.exports = router;
