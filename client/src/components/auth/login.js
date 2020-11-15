@@ -1,9 +1,8 @@
 import React, { useState, useContext } from "react";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import UserContext from "../../context/userContext";
 import Axios from "axios";
-// import ErrorNotice from "../misc/ErrorNotice";
-import { db } from "../../user";
+import ErrorNotice from "../../misc/ErrorNotice";
 
 export default function Login() {
   const [username, setUsername] = useState();
@@ -11,29 +10,29 @@ export default function Login() {
   const [error, setError] = useState();
 
   const { setUserData } = useContext(UserContext);
-  //   const { useHistory } = useHistory();
+  const history = useHistory();
 
   const submit = async (e) => {
     e.preventDefault();
     try {
       const loginUser = { username, password };
-      const loginRes = Axios.post("/teams/login", loginUser);
+      const loginRes = await Axios.post("user/login/", loginUser);
       setUserData({
         token: loginRes.data.token,
         user: loginRes.data.user,
       });
-      db.setItem("auth-token", loginRes.data.token);
-      db.push("/");
+      localStorage.setItem("auth-token", loginRes.data.token);
+      history.push("/");
     } catch (err) {
-      err.response.data.msg(err.response.data.msg);
+      err.response.data.msg && setError(err.response.data.msg);
     }
   };
   return (
     <div className="page">
       <h2>Log in</h2>
-      {/* {error && (
+      {error && (
         <ErrorNotice message={error} clearError={() => setError(undefined)} />
-      )} */}
+      )}
       <form className="form" onSubmit={submit}>
         <label htmlFor="login-username">Username</label>
         <input

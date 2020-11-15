@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
+import User from "./components/auth/auth";
 import UserContext from "./context/userContext";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
           <Jumbotron />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/user" component={User} />
           <Route path="/teams" component={Teams} />
           <Route path="/map" component={Map} />
         </UserContext.Provider>

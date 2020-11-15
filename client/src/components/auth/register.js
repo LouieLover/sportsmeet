@@ -1,9 +1,8 @@
 import React, { useState, useContext } from "react";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import UserContext from "../../context/userContext";
 import Axios from "axios";
 // import ErrorNotice from "../misc/ErrorNotice";
-import user from "../../user";
 
 export default function Register() {
   const [username, setUsername] = useState();
@@ -11,15 +10,15 @@ export default function Register() {
   const [error, setError] = useState();
 
   const { setUserData } = useContext(UserContext);
-  //   const history = useHistory();
+  const history = useHistory();
 
   const submit = async (e) => {
     e.preventDefault();
 
     try {
       const newUser = { username, password };
-      Axios.post("/teams/register", newUser);
-      const loginRes = Axios.post("/teams/login", {
+      await Axios.post("/user/register/", newUser);
+      const loginRes = await Axios.post("/user/login/", {
         username,
         password,
       });
@@ -27,8 +26,8 @@ export default function Register() {
         token: loginRes.data.token,
         user: loginRes.data.user,
       });
-      user.setItem("auth-token", loginRes.data.token);
-      user.push("/");
+      localStorage.setItem("auth-token", loginRes.data.token);
+      history.push("/");
     } catch (err) {
       err.response.data.msg && setError(err.response.data.msg);
     }
