@@ -17,7 +17,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const loginUser = { username, password };
-      const loginRes = Axios.post("/teams/login/", loginUser);
+      const loginRes = Axios.post("/teams/login", loginUser);
       setUserData({
         token: loginRes.data.token,
         user: loginRes.data.user,
@@ -25,7 +25,7 @@ export default function Login() {
       db.setItem("auth-token", loginRes.data.token);
       db.push("/");
     } catch (err) {
-      err.response.data.msg && setError(err.response.data.msg);
+      err.response.data.msg(err.response.data.msg);
     }
   };
   return (

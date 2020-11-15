@@ -18,8 +18,8 @@ export default function Register() {
 
     try {
       const newUser = { username, password };
-      await Axios.post("/user/register", newUser);
-      const loginRes = Axios.post("/user/login", {
+      Axios.post("/teams/register", newUser);
+      const loginRes = Axios.post("/teams/login", {
         username,
         password,
       });
