@@ -190,7 +190,7 @@ userRoutes.route("/:id").delete(function (req, res) {
   }
 });
 
-app.use("/teams", teamRoutes);
+app.use("/teams", teamRoutes, userRoutes);
 app.use("/user", userRoutes);
 // Define API routes here
 // app.use(routes);
