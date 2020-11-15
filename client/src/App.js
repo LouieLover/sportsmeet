@@ -1,12 +1,12 @@
-import React from "react";
 import Nav from "./components/nav";
 import Jumbotron from "./components/jumbotron";
 import Map from "./components/Map";
-
 import Teams from "./components/teams";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const App = () => {
+function App() {
   return (
     <Router>
       <div>
@@ -19,6 +19,6 @@ const App = () => {
       </div>
     </Router>
   );
-};
+}
 
 export default App;

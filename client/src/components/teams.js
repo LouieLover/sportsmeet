@@ -2,13 +2,16 @@ import React, { Component, useContext } from "react";
 // import API from "../utils/API";
 import axios from "axios";
 import Map from "./Map";
+import { Link } from "react-router-dom";
 
 const Team = (props) => (
   <tr>
     <td>{props.team.user}</td>
     <td>{props.team.team}</td>
     <td>{props.team.location}</td>
-    <td>{/* <Link to={"/edit/" + props.todo._id}>Edit</Link> */}</td>
+    <td>
+      <Link to={"/teams/" + props.team._id}>Edit</Link>
+    </td>
   </tr>
 );
 
@@ -52,18 +55,25 @@ export default class Teams extends Component {
     e.preventDefault();
 
     console.log(`Form submitted:`);
-    console.log(`Todo Team: ${this.state.user}`);
-    console.log(`Todo Location: ${this.state.team}`);
-    console.log(`Todo Description: ${this.state.location}`);
+    console.log(`user: ${this.state.user}`);
+    console.log(`team: ${this.state.team}`);
+    console.log(`location: ${this.state.location}`);
 
-    const newTodo = {
+    const newTeam = {
       user: this.state.user,
       team: this.state.team,
       location: this.state.location,
       completed: this.state.completed,
     };
 
-    axios.post("/teams/add", newTodo).then((res) => {
+    const obj = {
+      user: this.state.user,
+      team: this.state.team,
+      location: this.state.location,
+      completed: this.state.completed,
+    };
+
+    axios.post("/teams/add", newTeam).then((res) => {
       console.log(res.data);
       axios
         .get("/teams/")
@@ -73,6 +83,10 @@ export default class Teams extends Component {
         .catch(function (error) {
           console.log(error);
         });
+      axios
+        .put("/teams/" + this.props.match.params.id, obj)
+        .then((res) => console.log(res.data));
+      this.props.history.push("/teams/");
 
       this.setState({
         user: "",
@@ -81,7 +95,30 @@ export default class Teams extends Component {
         completed: false,
         teams: [],
       });
+
+      //   var myLatlng = new Map.maps.coords();
+      //   var mapOptions = {
+      //     zoom: 4,
+      //     center: myLatlng,
+      //   };
+      //   var map = new Map.maps.Map(document.getElementById("map"), mapOptions);
+
+      //   var marker = new Map.maps.Marker({
+      //     position: myLatlng,
+      //     title: "Hello World!",
+      //   });
+      //   marker.setMap(map);
     });
+  }
+
+  onSubmitDelete(e) {
+    e.preventDefault();
+
+    axios.delete("/teams/" + this.props.match.params.id).then((res) => {
+      console.log(res.data);
+      this.props.onSubmitDelete.push("/teams/");
+    });
+    // this.props.history.push("/teams/");
   }
 
   teamList() {
@@ -127,8 +164,22 @@ export default class Teams extends Component {
               />
             </div>
 
+            {
+              <div className="form-group">
+                <input
+                  type="submit"
+                  value="Submit"
+                  className="btn btn-primary"
+                />
+              </div>
+            }
             <div className="form-group">
-              <input type="submit" value="Submit" className="btn btn-primary" />
+              <input
+                handleSubmitDelete={this.onSubmitDelete}
+                type="submit"
+                value="Delete"
+                className="btn btn-primary"
+              />
             </div>
           </form>
         </div>
